@@ -1,5 +1,6 @@
 #ifndef ZZBRAIN_ZZNETWORK_H
 #define ZZBRAIN_ZZNETWORK_H
+#define DEFAULT_NB_OF_LAYERS 3
 
 struct interLayers {
     int nbNodesLayer1;
