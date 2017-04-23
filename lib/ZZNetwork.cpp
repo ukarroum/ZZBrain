@@ -32,3 +32,7 @@ ZZNetwork::~ZZNetwork() {
         delete[] network[i].weights;
     delete[] network;
 }
+
+double *ZZNetwork::predict(int *input) {
+
+}
