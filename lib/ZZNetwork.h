@@ -14,13 +14,16 @@ class ZZNetwork {
 public:
     ZZNetwork(int sizes[], int nbLayers);
 
-    operator bool() const {
-        return network;
-    }
     void train(int **trainingSet, int setSize);
     //void train(double **trainingSet, int nbFeatures, int setSize);
     int * predict(int *input);
     //Test function
+
+    operator bool() const {
+        return network;
+    }
+
+    ~ZZNetwork();
 
 public:
     int nbLayers;

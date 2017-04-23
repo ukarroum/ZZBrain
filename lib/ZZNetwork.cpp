@@ -26,3 +26,9 @@ ZZNetwork::ZZNetwork(int sizes[], int nbLayers){
         }
     }
 }
+
+ZZNetwork::~ZZNetwork() {
+    for(int i = 0; i < nbLayers - 1; i++)
+        delete[] network[i].weights;
+    delete[] network;
+}
