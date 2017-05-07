@@ -41,3 +41,23 @@ void print(double * M, int n, int m){
     }
     cout << endl;
 }
+
+double * diff(double * M, int n, int m, int x){
+	double * mRes = new double[(n*m)]();
+    	for (int i = 0; i < n; ++i) {
+        	for (int j = 0; j < m; ++j) {
+            	mRes[(i*m)+j]=M[(i*m)+j]-x;
+        	}
+    	}
+    return mRes;
+}
+
+double * eltMult(double * M1, double * M2, int n, int m){
+	double * mRes = new double[(n*m)]();
+    	for (int i = 0; i < n; ++i) {
+        	for (int j = 0; j < m; ++j) {
+            	mRes[(i*m)+j]=M1[(i*m)+j]*M1[(i*m)+j];
+        	}
+    	}
+    return mRes;
+}
