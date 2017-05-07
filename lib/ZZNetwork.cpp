@@ -1,14 +1,20 @@
 #include "ZZNetwork.h"
+#include "misc.h"
 #include <ctime>
 #include <cstdlib>
+#include <cstring>
 
 ZZNetwork::ZZNetwork(int sizes[], int nbLayers){
     this->nbLayers = nbLayers;
+    maxNodes = sizes[0];
+    trained = false;
     network = new interLayers[nbLayers - 1];
 
     if(network) {
         int i = 0;
         do {
+            if(maxNodes < sizes[i])
+                maxNodes = sizes[i];
             network[i].nbNodesLayer1 = sizes[i];
             network[i].nbNodesLayer2 = sizes[i + 1];
             network[i].weights = new double[network[i].nbNodesLayer1 * network[i].nbNodesLayer2];
@@ -34,5 +40,11 @@ ZZNetwork::~ZZNetwork() {
 }
 
 double *ZZNetwork::predict(int *input) {
+    double *tmpNodes = new double[maxNodes];
 
+    if(tmpNodes){
+        memcpy(tmpNodes, input, network[0].nbNodesLayer1);
+
+
+    }
 }

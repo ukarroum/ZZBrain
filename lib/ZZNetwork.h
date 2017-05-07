@@ -27,6 +27,8 @@ public:
 
 public:
     int nbLayers;
+    int maxNodes;
+    bool trained;
     interLayers *network;
 };
 
