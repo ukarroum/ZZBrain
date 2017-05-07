@@ -40,7 +40,7 @@ ZZNetwork::~ZZNetwork() {
     delete[] network;
 }
 
-void train(int **input, int **output, int setSize){
+void ZZNetwork::train(int **input, int **output, int setSize){
     double ***bigDelta = new double**[nbLayers];
     double **a = new double*[nbLayers];
     double **err = new double*[nbLayers];
