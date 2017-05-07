@@ -6,6 +6,24 @@ using namespace std;
 int main() {
     int sizes[] = {2, 1};
     int nbLayers = 2;
+
+    double **X = new double*[1];
+    double **Y = new double*[1];
+
+    for(int i = 0; i < 2; i++)
+    {
+        X[i] = new double[2];
+        Y[i] = new double;
+    }
+
+    X[0][0] = 0.0;
+    X[1][0] = 1.0;
+
+    Y[0][0] = 1.0;
+    Y[1][0] = 0.0;
+
+    double *A;
+
     ZZNetwork net(sizes, nbLayers);
 
     if(net){
@@ -17,6 +35,18 @@ int main() {
                 cout << net.network[i].weights[j] << " ";
             cout << endl;
         }
+
+        cout << "Training the network" << endl;
+        cout << "====================" << endl;
+        //net.network[0].weights[0] = 10.0;
+        //net.network[0].weights[1] = -20.0;
+
+        net.train(X, Y, 2);
+
+        cout << "Predicting" << endl;
+        A = net.predict(X[1]);
+        cout << *A << endl;
+
     }
     else
         cout << "Too Bad" << endl;

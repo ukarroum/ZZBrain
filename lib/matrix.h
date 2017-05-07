@@ -7,7 +7,8 @@
 double * mult(double* M1, double* M2, int n, int m, int k);
 double * sum(double* M1, double* M2, int n, int m);
 double * trans(double* M, int n, int m);
-double * diff(double * M, int n, int m, int x);
+double * diff(double * M1, double *M2, int n, int m);
 double * eltMult(double * M1, double * M2, int n, int m);
+double * ones(int n);
 void print(double * M, int n, int m);
 #endif //ZZBRAIN_MATRIX_H
