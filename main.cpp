@@ -4,9 +4,28 @@
 using namespace std;
 
 int main() {
-    int sizes[] = {2, 1};
+
+	/*
+		Exemple d'utilisation du réseau pour un NOT 
+	*/
+	
+	
+	/*
+ 		1ere couche : Entrée (0 ou 1)
+		2eme couche : Not(Entrée) (0 ou 1)
+		Pas de hidden layer 
+	*/
+    int sizes[] = {1, 1};
     int nbLayers = 2;
 
+	/* 
+ * 		X	:	Entrée
+ * 		Y	:	Résultat Attendu 
+ *
+ * 		X	Y
+ * 		0	1
+ * 		1	0
+ * 		*/
     double **X = new double*[1];
     double **Y = new double*[1];
 
@@ -24,6 +43,7 @@ int main() {
 
     double *A;
 
+	/* Initialisation du réseau (pour le moments les poids sont alétaroires) */
     ZZNetwork net(sizes, nbLayers);
 
     if(net){
