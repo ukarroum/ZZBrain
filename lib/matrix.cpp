@@ -66,8 +66,9 @@ double * eltMult(double * M1, double * M2, int n, int m){
     return mRes;
 }
 
-double *ones(int n){
-    double *mRes = new double[n];
+double * ones(int n){
+    double * mRes = new double[n];
     for(int i = 0; i < n; i++)
         mRes[i] = 1;
+	return mRes
 }
