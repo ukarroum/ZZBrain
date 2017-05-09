@@ -49,6 +49,8 @@ int main() {
     if(net){
         cout << "Created" << endl;
         cout << net.nbLayers << endl;
+
+		//Affichage des poids aléatoires
         for(int i = 0; i < nbLayers - 1; i++)
         {
             for(int j = 0; j < net.network[i].nbNodesLayer1*net.network[i].nbNodesLayer2; j++)
@@ -58,17 +60,24 @@ int main() {
 
         cout << "Training the network" << endl;
         cout << "====================" << endl;
+
+		/* La fonction prédict donne bien le résultat attendu si on affecte les poids nécéssaires manuellement */
         //net.network[0].weights[0] = 10.0;
         //net.network[0].weights[1] = -20.0;
 
+		/* Construit le réseau (calcul des poids) [backward propagation]*/
         net.train(X, Y, 2);
 
+		/* La fonction prédict retourne le résultat du réseau une fois entrainé */
+		/* predict(1) => 0
+ * 			predict(0) => 1 
+ */
         cout << "Predicting" << endl;
         A = net.predict(X[1]);
         cout << *A << endl;
 
     }
     else
-        cout << "Too Bad" << endl;
+        cout << "ERROR : Too Bad" << endl;
     return 0;
 }
