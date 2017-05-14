@@ -6,6 +6,7 @@
 
 using namespace std;
 
+/* M1 (n * m) M2 (m * k) */
 double * mult(double* M1, double* M2, int n, int m, int k){
     double * mRes = new double[(n*k)]();
     for (int i = 0; i < n; i++) {
@@ -70,5 +71,5 @@ double * ones(int n){
     double * mRes = new double[n];
     for(int i = 0; i < n; i++)
         mRes[i] = 1;
-	return mRes
+	return mRes;
 }

@@ -94,14 +94,13 @@ double *ZZNetwork::predict(double *input) {
     double *z;
 
     if(a) {
-        a[0] = 1.0;
-        memcpy(a + 1, input, network[0].nbNodesLayer1 * sizeof(double));
+        memcpy(a, input, network[0].nbNodesLayer1 * sizeof(double));
         for (int i = 0; i < nbLayers - 1; i++) {
-            for (int j = 0; j < network[i].nbNodesLayer2; j++) {
+                memmove(a + 1, a, network[i].nbNodesLayer1 * sizeof(double));
+                a[0] = 1.0;
                 z = mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1);
                 a = sigmoid(z, network[i].nbNodesLayer2, 1);
                 delete[] z;
-            }
         }
     }
 
