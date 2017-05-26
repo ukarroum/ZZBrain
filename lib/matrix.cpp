@@ -19,6 +19,16 @@ double * mult(double* M1, double* M2, int n, int m, int k){
     return mRes;
 }
 
+double * mult(double* M, double cst, int n, int m){
+    double * mRes = new double[(n*m)]();
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; ++j){
+            mRes[(i*m)+j]+=cst*M[(i*m)+j];
+        }
+    }
+    return mRes;
+}
+
 
 double * sum(double* M1, double* M2, int n, int m){
     double * mRes = new double[(n*m)]();

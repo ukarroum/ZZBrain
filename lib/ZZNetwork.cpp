@@ -44,51 +44,82 @@ ZZNetwork::~ZZNetwork() {
     delete[] network;
 }
 
-void ZZNetwork::train(double **input, double **output, int setSize){
+void ZZNetwork::train(double **input, double **output, int setSize, double lambda=0.01){
     double ***bigDelta = new double**[nbLayers];
+    double ***D = new double**[nbLayers];
     double **a = new double*[nbLayers];
     double **err = new double*[nbLayers];
     double *z, *tr, *theta_delta, *gz, *one, *dif, *eltm1;
 
-    if(a && err && bigDelta){
-        for(int i = 0; i < nbLayers; i++){
-            a[i] = new double[maxNodes];
-            err[i] = new double[maxNodes];
-
-            bigDelta[i] = new double*[maxNodes];
-            for(int j = 0; j < maxNodes; j++){
-                bigDelta[i][j] = new double[maxNodes];
-            }
-        }
-
-        for(int i = 0; i < setSize; i++) {
-            //Forward Propagation
-            a[0][0] = 1;
-            memcpy(a[0] + 1, input[i], network[0].nbNodesLayer1 * sizeof(double));
-            for (int l = 1; l < nbLayers; l++) {
-                for (int k = 0; k < network[l - 1].nbNodesLayer2; k++) {
-                    z = mult(network[l - 1].weights, a[l - 1], network[l - 1].nbNodesLayer2, network[l - 1].nbNodesLayer1 + 1, 1);
-                    a[l] = sigmoid(z, network[l - 1].nbNodesLayer2, 1);
-                    delete[] z;
+    if(a && err && bigDelta && D){
+        for(int l = 0; l < nbLayers; l++){
+            a[l] = new double[maxNodes];
+            err[l] = new double[maxNodes];
+            
+            D[l] = new double*[maxNodes];
+            bigDelta[l] = new double*[maxNodes];
+            for(int i = 0; i < maxNodes; i++){
+                bigDelta[l][i] = new double[maxNodes];
+                D[l][i] = new double[maxNodes];
+                for(int j=0; j < maxNodes; j++){
+                    bigDelta[l][i][j] = 0;
                 }
             }
-
-            err[nbLayers - 1] = diff(a[nbLayers - 1], output[i], network[nbLayers - 2].nbNodesLayer2, 1);
-            for(int l = nbLayers - 2; l > 1; l--){
-                tr = trans(network[l].weights, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1);
-                theta_delta = mult(tr, err[l + 1], network[l].nbNodesLayer1 + 1, network[l].nbNodesLayer2, network[l + 1].nbNodesLayer2);
-                one = ones(network[l + 1].nbNodesLayer2);
-                dif = diff(one, a[l], network[l + 1].nbNodesLayer2, 1);
-                eltm1 = eltMult(a[l], dif, network[l + 1].nbNodesLayer2, 1);
-                err[l] = eltMult(theta_delta, eltm1, network[l + 1].nbNodesLayer2, 1);
+        }
+        
+        for(int i = 0; i < setSize; i++) { // m = setSize //
+            //Forward Propagation
+            a[0][0] = 1; 
+            memcpy(a[0] + 1, input[i], network[0].nbNodesLayer1 * sizeof(double));
+            for (int l = 1; l < nbLayers; l++) {
+                z = mult(network[l - 1].weights, a[l - 1], network[l - 1].nbNodesLayer2, network[l - 1].nbNodesLayer1 + 1, 1);
+                a[l] = sigmoid(z, network[l - 1].nbNodesLayer2, 1);
+                delete[] z;
             }
 
+            // Calculating Erreur (small delta) 
+            
+            err[nbLayers - 1] = diff(a[nbLayers - 1], output[i], network[nbLayers - 2].nbNodesLayer2, 1);
+            
+            for(int l = nbLayers - 2; l > 0 ; l--){
+
+                tr = trans(network[l].weights, network[l].nbNodesLayer2, network[l].nbNodesLayer1 + 1);
+                theta_delta = mult(tr, err[l + 1], network[l].nbNodesLayer1 + 1, network[l].nbNodesLayer2, network[l].nbNodesLayer2);
+                one = ones(network[l].nbNodesLayer1);
+                dif = diff(one, a[l], network[l].nbNodesLayer1, 1);
+                eltm1 = eltMult(a[l], dif, network[l].nbNodesLayer1, 1);
+                err[l] = eltMult(theta_delta, eltm1, network[l].nbNodesLayer1, 1);
+
+                delete[] tr;
+                delete[] theta_delta;
+                delete[] dif;
+                delete[] one;
+                delete[] eltm1;
+            }
+            
+            // Calculating bigDelta gradient accumelator;
+
+            for(int l = 0; l < nbLayers - 2; l++){
+                tr = trans(a[l],network[l].nbNodesLayer1, 1);
+                theta_delta = mult(err[l+1], tr, network[l].nbNodesLayer2, 1, network[l].nbNodesLayer1);
+                bigDelta[l] = sum(bigDelta[l], theta_delta, network[l].nbNodesLayer2, network[l].nbNodesLayer1);
+            }
 
         }
-    }
 
+       // Calculation D the gradient XD
 
+       for(int l=0; l < nbLayers; l++){
+          for(int i=0; i < network[l].nbNodesLayer2; i++) {
+                for(int j=1; j < network[l].nbNodesLayer1; j++){
+                    D[l][i][j] = bigDelta[l][i][j]/setSize + lambda*network[l].weights[i][j];
+                }
+                // if j = 0
+                D[l][i][0] = bigDelta[l][i][0]/setSize; 
+           }
+       }
 }
+
 double *ZZNetwork::predict(double *input) {
     double *a = new double[maxNodes + 1];
     double *z;

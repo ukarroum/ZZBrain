@@ -14,7 +14,7 @@ class ZZNetwork {
 public:
     ZZNetwork(int sizes[], int nbLayers);
 
-    void train(double **input, double **output, int setSize);
+    void train(double **input, double **output, int setSize, double lambda=0.01);
     //void train(double **trainingSet, int nbFeatures, int setSize);
     double * predict(double *input);
     //Test function
