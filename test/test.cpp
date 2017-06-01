@@ -243,4 +243,3 @@ void test_network_xnor(){
     else
         cout << "\033[1;31m" << "Not Working !" << "\033[0m" << endl;
 }
-
