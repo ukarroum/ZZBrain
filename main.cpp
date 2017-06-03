@@ -7,8 +7,8 @@ using namespace std;
 int main() {
 
 	srand (time(NULL));
-	int sizes[] = {2, 1};
-	int nbLayers = 2;
+	int sizes[] = {2, 8, 8, 8, 1};
+	int nbLayers = 4;
 	int xEq0 = 0;
 	double **X = new double*[1000];
 	double **Y = new double*[1000];
@@ -64,7 +64,7 @@ int main() {
 	{
 		X[i][0] = 0.0;
 		X[i][1] = 0.0;
-		Y[i][0] = 0.0;
+		Y[i][0] = 1.0;
 	}
 
 	for(int i = 750; i < 1000; i++)
@@ -79,10 +79,10 @@ int main() {
 	ZZNetwork notNet(sizes, nbLayers, 1000, X, Y, 0.001);
 	notNet.train();
 
-	cout << "and(0, 1) = " << notNet.predict(X[0])[0] << endl;
-	cout << "and(1, 0) = " << notNet.predict(X[300])[0] << endl;
-	cout << "and(0, 0) = " << notNet.predict(X[600])[0] << endl;
-	cout << "and(1, 1) = " << notNet.predict(X[900])[0] << endl;
+	cout << "xnor(0, 1) = " << notNet.predict(X[0])[0] << endl;
+	cout << "xnor(1, 0) = " << notNet.predict(X[300])[0] << endl;
+	cout << "xnor(0, 0) = " << notNet.predict(X[600])[0] << endl;
+	cout << "xnor(1, 1) = " << notNet.predict(X[900])[0] << endl;
 
 
 	/*
