@@ -25,16 +25,18 @@ typedef matrix<double, 0, 1> column_vector;
 class ZZNetwork {
 
 public:
-    ZZNetwork(int sizes[], int nbLayers, int setSize, double **input, double **output, double lambda=0.01);
+    //Class's constructor, initialise the weights to random values, and make the necessary space allocations.
+    ZZNetwork(int sizes[], int nbLayers, int setSize, double **input, double **output, double lambda=0);
 
+    //Train the neural network using the dataset gave to the costructor.
     void train();
-    //void train(double **trainingSet, int nbFeatures, int setSize);
+
+    //Perform a forward propagation to calcul the result of a given query.
     double * predict(double *input);
 
 	double ***backPropagation();
     double costFunction(const column_vector& thetas);
     const column_vector costFunctionDerivative(const column_vector& thetas);
-    //Test function
 
     operator bool() const {
         return network;

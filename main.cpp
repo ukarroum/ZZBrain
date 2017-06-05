@@ -7,7 +7,7 @@ using namespace std;
 int main() {
 
 	srand (time(NULL));
-	int sizes[] = {2, 8, 8, 8, 1};
+	int sizes[] = {2, 8, 8, 1};
 	int nbLayers = 4;
 	int xEq0 = 0;
 	double **X = new double*[1000];

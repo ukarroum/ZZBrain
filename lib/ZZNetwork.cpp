@@ -20,27 +20,126 @@ ZZNetwork::ZZNetwork(int sizes[], int nbLayers, int setSize, double **input, dou
                 maxNodes = sizes[i];
             network[i].nbNodesLayer1 = sizes[i];
             network[i].nbNodesLayer2 = sizes[i + 1];
+            //network[i].nbNodesLayer1 + 1 to include the biais weights
             network[i].weights = new double[ (network[i].nbNodesLayer1 + 1) * network[i].nbNodesLayer2];
 
-            if(network[i].weights)
-                for(int j = 0; j < (network[i].nbNodesLayer1 + 1) * network[i].nbNodesLayer2; j++)
-                    network[i].weights[j] = (std::rand() / (RAND_MAX + 1.0))*10 - 5 ;
+            if(network[i].weights){
+                for(int j = 0; j < (network[i].nbNodesLayer1 + 1) * network[i].nbNodesLayer2; j++){
+                    //weights are initialised in the interval : [-r;r] (r = 4*sqrt(6/(nbNodesLayer1(including biais nodes) + nbNodesLayer2)))
+                    //This interval will work only for sigmoid function (as activation function)
+                    //There is a possibility that in the future we may change activation function, this line will need to be changed
+                    double r = 4*sqrt(6.0/(network[i].nbNodesLayer1 + 1 + network[i].nbNodesLayer2));
+                    network[i].weights[j] = (std::rand() / (RAND_MAX + 1.0))*2*r - r ;
+                }
+            }
             i++;
         }while(i < nbLayers - 1 && network[i - 1].weights);
 
         if(!network[i - 1].weights) {
+            //If we can't alloc enough memory for a layer we need to free
+            //the previous ones
             for(int j = i - 2; j >= 0; j++)
                 delete[] network[j].weights;
             delete[] network;
         }
     }
+    //Incremented to include bias node
     maxNodes++;
 }
 
-ZZNetwork::~ZZNetwork() {
+void ZZNetwork::train(){
+
+    /* Creation of the initial theta column vector using the values in the network
+        To use Dlib minimisation functions we need to use their data structure
+        it can be costy if we have a large network, but we don't really have a choice
+        */
+	int size = 0;
+
+	for(int i = 0; i < nbLayers - 1; i++)
+		size += (network[i].nbNodesLayer1 + 1)*network[i].nbNodesLayer2;
+
+	column_vector init_theta(size);
+
+	size = 0;
+	for(int l = 0; l < nbLayers - 1; l++)
+		for(int j = 0; j < network[l].nbNodesLayer2; j++)
+			for(int i = 0; i < network[l].nbNodesLayer1 + 1; i++, size++)
+				init_theta(size) = network[l].weights[j*(network[l].nbNodesLayer1 + 1) + i];
+
+    /* Minimisation of the cost function using a quasi-newtonien method (BFGS) */
+	find_min(bfgs_search_strategy(), objective_delta_stop_strategy(1e-7),
+		[this](column_vector const&v) -> double { return costFunction(v); },
+		[this](column_vector const&v) -> column_vector { return costFunctionDerivative(v); },
+		init_theta, -1);
+
+}
+
+double *ZZNetwork::predict(double *input) {
+
+    double *a = new double[maxNodes + 1];
+    double *z;
+
+    if(a) {
+
+        /* Perform a forward propagation to calculate the output value of the network
+            for a given value as input */
+        memcpy(a, input, network[0].nbNodesLayer1 * sizeof(double));
+        for (int i = 0; i < nbLayers - 1; i++) {
+                /* Add the bias node */
+                memmove(a + 1, a, network[i].nbNodesLayer1 * sizeof(double));
+                a[0] = 1.0;
+                z = mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1);
+                a = sigmoid(z, network[i].nbNodesLayer2, 1);
+                delete[] z;
+        }
+    }
+
+    return a;
+}
+
+double ZZNetwork::costFunction(const column_vector& thetas){
+    int cpt = 0;
+
     for(int i = 0; i < nbLayers - 1; i++)
-        delete[] network[i].weights;
-    delete[] network;
+		for(int j = 0; j < (network[i].nbNodesLayer1 + 1)*(network[i].nbNodesLayer2); j++, cpt++)
+			network[i].weights[j] = thetas(cpt);
+
+
+    double sum = 0, thetas_sum = 0;
+
+    for(int i = 0; i < setSize; i++)
+        for(int k = 0; k < network[nbLayers - 2].nbNodesLayer2; k++)
+            sum += output[i][k]*log(predict(input[i])[k]) + (1 - output[i][k])*log(1 - predict(input[i])[k]);
+
+    sum /= -setSize;
+
+    for(int i = 0; i < thetas.nr(); i++)
+        thetas_sum += thetas(i)*thetas(i);
+
+    sum += (lambda/(2*setSize))*thetas_sum;
+
+    return sum;
+}
+
+const column_vector ZZNetwork::costFunctionDerivative(const column_vector& thetas)
+{
+	int cpt = 0;
+	double ***D;
+	column_vector deriv(thetas.nr());
+
+	for(int i = 0; i < nbLayers - 1; i++)
+		for(int j = 0; j < (network[i].nbNodesLayer1 + 1)*(network[i].nbNodesLayer2); j++, cpt++)
+			network[i].weights[j] = thetas(cpt);
+
+	D = backPropagation();
+	cpt = 0;
+
+	for(int l = 0; l < nbLayers - 1; l++)
+		for(int i = 0; i < network[l].nbNodesLayer2; i++)
+			for(int j = 0; j < network[l].nbNodesLayer1 + 1; j++, cpt++)
+				deriv(cpt) = D[l][i][j];
+
+	return deriv;
 }
 
 double ***ZZNetwork::backPropagation(){
@@ -114,7 +213,6 @@ double ***ZZNetwork::backPropagation(){
 					for(int j = 0; j < network[l].nbNodesLayer1 + 1; j++)
                 		bigDelta[l][k][j] = bigDelta[l][k][j] + theta_delta[k * (network[l].nbNodesLayer1 + 1) + j];
             }
-
         }
 
        // Calculation D the gradient XD
@@ -130,84 +228,8 @@ double ***ZZNetwork::backPropagation(){
 	return D;
 }
 
-double *ZZNetwork::predict(double *input) {
-    double *a = new double[maxNodes + 1];
-    double *z;
-
-    if(a) {
-        memcpy(a, input, network[0].nbNodesLayer1 * sizeof(double));
-        for (int i = 0; i < nbLayers - 1; i++) {
-                memmove(a + 1, a, network[i].nbNodesLayer1 * sizeof(double));
-                a[0] = 1.0;
-                z = mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1);
-                a = sigmoid(z, network[i].nbNodesLayer2, 1);
-                delete[] z;
-        }
-    }
-
-    return a;
-}
-double ZZNetwork::costFunction(const column_vector& thetas){
-    int cpt = 0;
-
+ZZNetwork::~ZZNetwork() {
     for(int i = 0; i < nbLayers - 1; i++)
-		for(int j = 0; j < (network[i].nbNodesLayer1 + 1)*(network[i].nbNodesLayer2); j++, cpt++)
-			network[i].weights[j] = thetas(cpt);
-
-
-    double sum = 0;
-    double thetas_sum = 0;
-    for(int i = 0; i < setSize; i++)
-        for(int k = 0; k < network[nbLayers - 2].nbNodesLayer2; k++)
-            sum += output[i][k]*log(predict(input[i])[k]) + (1 - output[i][k])*log(1 - predict(input[i])[k]);
-
-    sum /= -setSize;
-
-    for(int i = 0; i < thetas.nr(); i++)
-        thetas_sum += thetas(i)*thetas(i);
-
-    sum += (lambda/(2*setSize))*thetas_sum;
-
-    return sum;
-}
-const column_vector ZZNetwork::costFunctionDerivative(const column_vector& thetas)
-{
-	int cpt = 0;
-	double ***D;
-	column_vector deriv(thetas.nr());
-
-	for(int i = 0; i < nbLayers - 1; i++)
-		for(int j = 0; j < (network[i].nbNodesLayer1 + 1)*(network[i].nbNodesLayer2); j++, cpt++)
-			network[i].weights[j] = thetas(cpt);
-
-	D = backPropagation();
-	cpt = 0;
-
-	for(int l = 0; l < nbLayers - 1; l++)
-		for(int i = 0; i < network[l].nbNodesLayer2; i++)
-			for(int j = 0; j < network[l].nbNodesLayer1 + 1; j++, cpt++)
-				deriv(cpt) = D[l][i][j];
-
-	return deriv;
-}
-
-void ZZNetwork::train(){
-	int size = 0;
-
-	for(int i = 0; i < nbLayers - 1; i++)
-		size += (network[i].nbNodesLayer1 + 1)*network[i].nbNodesLayer2;
-
-	column_vector init_theta(size);
-
-	size = 0;
-	for(int l = 0; l < nbLayers - 1; l++)
-		for(int j = 0; j < network[l].nbNodesLayer2; j++)
-			for(int i = 0; i < network[l].nbNodesLayer1 + 1; i++, size++)
-				init_theta(size) = network[l].weights[j*(network[l].nbNodesLayer1 + 1) + i];
-
-	find_min(bfgs_search_strategy(), objective_delta_stop_strategy(1e-7),
-		[this](column_vector const&v) -> double { return costFunction(v); },
-		[this](column_vector const&v) -> column_vector { return costFunctionDerivative(v); },
-		init_theta, -1);
-
+        delete[] network[i].weights;
+    delete[] network;
 }
