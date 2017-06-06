@@ -7,8 +7,8 @@ using namespace std;
 int main() {
 
 	srand (time(NULL));
-	int sizes[] = {2, 8, 8, 1};
-	int nbLayers = 4;
+	int sizes[] = {2, 8, 8, 8, 1};
+	int nbLayers = 5;
 	int xEq0 = 0;
 	double **X = new double*[1000];
 	double **Y = new double*[1000];
@@ -58,6 +58,11 @@ int main() {
 	cout << "xnor(0, 0) = " << notNet.predict(X[600])[0] << endl;
 	cout << "xnor(1, 1) = " << notNet.predict(X[900])[0] << endl;
 
+    for(int i=0; i<nbLayers-1; i++){
+        for(int j=0; j<(notNet[i].nbNodesLayer1 + 1) * notNet[i].nbNodesLayer2; j++){
+            cout << "Layer " << i << "Node " << j << " = "  << notNet.weights[j] << endl;
+        }
+    }
 
     return 0;
 
