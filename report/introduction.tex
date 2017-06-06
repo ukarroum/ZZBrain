@@ -1,12 +1,16 @@
 \section{Introduction}
 
-Le présent document vise à décrire le projet ZZBrain, ce projet fut réalisé dans le cadre du module \textit{Projet de deuxième semestre de la première année} à l'ISIMA. Il vise à créer une bibliothéque basique permettant la création et l'entrainement d'un classification basée sur les reseaux de neurons, c'est un projet purement pédagogique, et le lecteur intéréssé par une bibliothéque pareil trouvera des alternatives bien plus puissantes tel que : \textit{TensorFlow} ou \textit{DLib}.
+Le présent document vise à décrire le projet ZZBrain, ce projet fut réalisé dans le cadre du module \textit{Projet de deuxième semestre de la première année} à l'ISIMA. Il vise à créer une bibliothèque basique permettant la création et l'entrainement d'une classification basée sur les réseaux de neurones, c'est un projet purement pédagogique, et le lecteur intéressé par une bibliothéque pareil trouvera des alternatives bien plus puissantes telles que : \textit{TensorFlow}\footnote{https://www.tensorflow.org/} ou \textit{DLib}\footnote{http://dlib.net/}.
 
-Les notations, alorithmes et formules utilisés sont fortement basés sur le cours \textit{Machine Learning} de \textit{Andrew Ng} meme si ce dernièr est principalement proposé en \textit{Octave}\footnote{Alternative libre à \textit{Matlab}} alors que ZZBrain est codée en C++.
 
-Nous utilisons la biblothéque \textit{Dlib} pour la minimisation de la fonction $J(\Theta)$ .
+Les notations, algorithmes et formules utilisés sont fortement basés sur le cours \textit{Machine Learning} de \textit{Andrew Ng}\cite{machine-course} même si ce dernier est principalement proposé en \textit{Octave}\footnote{Alternative libre à \textit{Matlab}} alors que ZZBrain est codé en C++\cite{cpp}.
 
-Dans ce qui suit nous présenterons de façon générale l'idée derrière les reseaux de neurons, nous présenterons également des conventions et notations qui seront utilisés un peu plus bas our expliquer les algorithmes et les structures de données utilisés.
-Nous proposerons également des pistes pour d'éventuels améliorations de ce projet.
+
+Nous utilisons la biblothéque \textit{Dlib}\cite{dlib} pour la minimisation de la fonction $J(\Theta)$ .
+
+
+Dans ce qui suit nous présenterons de façon générale l'idée derrière les réseaux de neurones, nous présenterons également des conventions et notations qui seront utilisées un peu plus bas our expliquer les algorithmes et les structures de données utilisés.
+Nous proposerons également des pistes pour d'éventuelles améliorations de ce projet.
+
 
 Une multitude d'exemples (implémentés en utilisant ZZBrain), seront également présentés et expliqués un peu plus bas.

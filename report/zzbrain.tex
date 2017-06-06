@@ -1,1 +1,150 @@
 \section{ZZBrain}
+
+\subsection{Intoduction}
+	Dans cette section on va présenter les différentes fonctionnalités de la bibliothèque.
+On a opté pour partager cette dernière en plusieurs parties différentes, la première contient tout ce qui est calculs matriciels mais compatible avec notre structure presente en haut.
+La deuxième partie contient les fonctions principales du réseau de neurones, et une dernière partie pour tous autres fonctions diverses utilisées dans la bibliothèque.
+
+\subsection{Les fonctions matricielles}
+
+\subsubsection{Organisation du code source}
+
+\begin{description}
+\item[matrix.cpp] : La bibliothèque des fonctions matricielles.
+\item[matrix.h] : Fichier contenant les prototypes des fonctions de la bibliothèque.
+\end{description}
+\subsubsection{Liste des fonctions}
+
+\paragraph{Multiplication matrice matrice}
+\begin{description}
+\item[{double * mult(double* M1, double* M2, int n, int m, int k)}] :\\ Cette fonction fait la multiplication d'une matrice \textbf{M1(n x m)} par une deuxième matrice \textbf{M2(m x k)} et qui renvoie le résultat comme pointeur vers une troisième matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Multiplication scalaire matrice}
+\begin{description}
+\item[{double * mult(double* M, double cst, int n, int m)}] : \\ En utilisant la notion de la surcharge de C++ on a fait une deuxième fonction pour la multiplication mais cette fois-ci d'une matrice \textbf{M(n x m)} par une constante \textbf{cst} et qui renvoie le résultat comme pointeur vers une troisième matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Multiplication élément par élément}
+\begin{description}
+\item[{double * eltMult(double * M1, double * M2, int n, int m)}] :\\ Cette fonction fait la multiplication élément par élément d'une matrice \textbf{M1(n x m)} par une deuxième matrice \textbf{M2(n x m)} et qui renvoie le résultat comme pointeur vers une troisième matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Somme des deux matrices}
+\begin{description}
+\item[{double * sum(double* M1, double* M2, int n, int m)}] :\\ Cette fonction fait la somme des deux matrice \textbf{M1(n x m)} et \textbf{M2(n x m)} et qui renvoie le résultat comme pointeur vers une matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Différence des deux matrices}
+\begin{description}
+\item[{double * diff(double * M1, double *M2, int n, int m)}] :\\ Cette fonction fait la différence entre des deux matrice \textbf{M1(n x m)} et \textbf{M2(n x m)} et qui renvoie le résultat comme pointeur vers une matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Transposée d'une matrice}
+\begin{description}
+\item[{double * trans(double* M, int n, int m)}] :\\ Cette fonction fait le transpose d'une matrice \textbf{M(n x m)} et qui renvoie le résultat comme pointeur vers une matrice allouée par la fonction.
+\end{description}
+
+\paragraph{Matrice des uns}
+\begin{description}
+\item[{double * ones(int n)}] :\\ Cette fonction génère une matrice carrée de taille \textbf{n} qui contient seulement \textbf{des uns} et qui renvoie un pointeur vers cette dernière.
+\end{description}
+
+\paragraph{Fonction d'affichage}
+\begin{description}
+\item[{void print(double * M, int n, int m)}] :\\ Cette fonction permet d'afficher une matrice \textbf{M(n x m)} à la sortie standard .
+\end{description}
+
+\subsection{Les fonctions du réseau de neurone}
+
+\subsubsection{Organisation du code source}
+
+\begin{description}
+\item[ZZNetwok.cpp] : La bibliothèque des fonctions principales du réseau.
+\item[ZZNetwok.h] : Fichier contenant les prototypes des fonctions de la bibliothèque.
+\end{description}
+\subsubsection{Liste des fonctions}
+
+\paragraph{Le constructeur}
+\begin{description}
+\item[{ZZNetwork(int sizes[],int nbLayers, int setSize, double **input, double **output, double lambda=0.01)}]: le constructeur du réseau, On lui passe comme parametre :
+	\begin{description}
+		\item[{int sizes[]}] : Un tableau des entiers qui contient la taille (nombre des noeuds) de chaque couche.
+        \item[int nbLayers] : Le nombre des couche.
+        \item[int setSize] : Le nombre des éléments de l'ensembre d'apprentissage .
+        \item[double **input] : Un tableau de vecteurs d'entrées.
+        \item[double **output] : Un tableau de vecteurs de sorties.
+        \item[lambda=0.01] : un parametre utilisé dans le processus d'apprentissage. On lui affecte 0.01 par defaut.
+	\end{description}
+Ces fonctionnalites :
+\begin{itemize}
+\item Initialisation des différentes variables du réseau par les valeurs passées en paramètre.
+\item Allocation des différentes parties de la structure du réseau.
+\item Initialisation des poids dans un intervalle \textbf{[-r,r]} bien precis . cet intervalle marche seulement qu'on utilise la fonction \textit{sigmoid} , ou r est un double qu'on le calcule de la facon suivant :
+\begin{minted}{c++}
+     r = 4*sqrt(6.0/(network[i].nbNodesLayer1 + 1 + network[i].nbNodesLayer2));
+\end{minted}
+Bien évidemment si on opte à utiliser une fonction autre que \textit{sigmoid} cet intervalle n'est plus utile.
+\end{itemize}
+\end{description}
+
+\paragraph{La prediction / propagation }
+\begin{description}
+\item[{double * predict(double *input)}]:\\ la fonction du prediction des résultats d'après un ensemble des entrées passées en paramètre :
+	\begin{description}
+        \item[double *input] : Un tableau des entrées.
+	\end{description}
+On obtient à la fin un tableau \textbf{a} des sorties prédit par l'algorithme de la propagation.
+	Pour chaque couche du réseau on calcule un vecteur \textit{z} et on applique la fonction sigmoid sur ce dernier pour avoir le vecteur final \textbf{a} .
+\begin{minted}{c++}
+  z = mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1);
+  a = sigmoid(z, network[i].nbNodesLayer2, 1);
+\end{minted}
+\end{description}
+
+\paragraph{La Retropropagation }
+\begin{description}
+\item[{double ***backPropagation()}]:\\ l'implementation de l'algorithme de la retropropagation expliqué en haut, On obtient le gradient un tableau tri-dimensionnel \textbf{D} comme sortie par contre elle prend aucune entrée :
+\begin{itemize}
+\item Allocation des différentes tableaux et vecteur utilisés pour les calculs intermédiaire.
+\item Application de la propagation pour obtenir les vecteurs \textbf{a} intermédiaire pour chaque couche.
+\item Calcul d'erreurs entre les vecteurs \textbf{a} obtenus à l'étape précédente et les sorties donnée par l'utilisateur lors de la creation du reseau
+\begin{minted}{c++}
+tr = trans(network[l].weights, network[l].nbNodesLayer2, network[l].nbNodesLayer1+1);
+theta_delta = mult(tr, err[l+1], network[l].nbNodesLayer1+1, network[l].nbNodesLayer2,1);
+one = ones(network[l].nbNodesLayer1+1);
+memmove(z[l]+1, z[l], network[l].nbNodesLayer1 * sizeof(double));
+z[l][0] = 1.0;
+dif = diff(one, sigmoid(z[l],network[l].nbNodesLayer1+1,1),network[l].nbNodesLayer1+1,1);
+eltm1 = eltMult(sigmoid(z[l],network[l].nbNodesLayer1+1,1),dif,network[l].nbNodesLayer1+1,1);
+err[l] = eltMult(theta_delta, eltm1, network[l].nbNodesLayer1+1,1) + 1;
+\end{minted}
+\item Calcul du gradient accumulateur grand delta pour chaque couche
+
+\begin{minted}{c++}
+bigDelta[l][k][j] = bigDelta[l][k][j] + theta_delta[k*(network[l].nbNodesLayer1+1)+j];
+\end{minted}
+\item Calcul du gradient on utilisant le grand delta calcule a l'etape precedente, la valeur lambda et les poids
+\begin{minted}{c++}
+ D[l][i][j]=bigDelta[l][i][j]/setSize+lambda*network[l].weights[i*(network[l].nbNodesLayer1+1)+j];
+\end{minted}
+\end{itemize}
+\begin{verbatim}
+
+\end{verbatim}
+\boldred{Note} : l est le numero de , i est le numero de et j est le numero de
+\end{description}
+
+\paragraph{L'apprentissage}
+\begin{description}
+\item[{void train()}]: la fonction de l'apprentissage du programme , on reçoit les resultat sur la sortie standard.\\
+Pour utiliser les fonctions du minimisation de la bibliothèque \textit{dlib} il faut adapter la structure des vecteurs a celle utilisée dans cette bibliothèque.
+Pour faire ca on a créé une fonction qui transforme un vecteur ou matrice représentée sous notre structure à une structure compatible avec les fonctions de \textit{dlib}.
+On utilise pour la minimisation la methode \textit{Quasi-Newton}, c'est une méthode numérique utilisée pour résoudre des systèmes d'équations non linéaires dont on ne connaît pas forcément l'expression analytique.
+une deuxieme raison pour laquelle on a opté pour cette methode c'est la conditions d'arrêt  utilisé ; et c'est qu'on l'ecart entre deux iterations devient inférieur a $10^{-7}$ et on arrive toujours cette condition notre l'algorithme utilisé.
+
+
+\begin{minted}{c++}
+
+\end{minted}
+\end{description}

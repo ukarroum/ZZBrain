@@ -4,7 +4,7 @@
 \usepackage[french]{babel}
 \selectlanguage{french}
 \usepackage[french,onelanguage, linesnumbered, longend, boxruled]{algorithm2e}
-\usepackage[lmargin=3.81cm,tmargin=2.54cm,rmargin=2.54cm,bmargin=2.52cm]{geometry}
+\usepackage[lmargin=1.9cm,tmargin=2.54cm,rmargin=2.0cm,bmargin=2.52cm]{geometry}
 \usepackage{amsmath}
 \usepackage{tikz}
 \usepgflibrary{arrows}
@@ -15,18 +15,23 @@
 \usepackage{longtable}
 \usepackage{fullpage, lmodern, minted}
 \usepackage{pgfplots}
+\newcommand\boldred[1]{\textcolor{red}{\textbf{#1}}}
+\usepackage{biblatex}
+\addbibresource{web.bib}
+\usepackage{parskip}
 
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
 \author{Imad ENNEIYMY\\
 		\texttt{enneiymy.i@gmail.com}
+		%\\[1cm] {\hspace{1cm}{\small Encé: A.D.Visor}}
 		\and
 		Yassir Karroum\\
 		\texttt{ukarroum17@gmail.com}
 }
 
-\title{Rapport N 3 TP SDD\\
+\title{Rapport Projet ZZBrain\\
 		\large ISIMA}
 \begin{document}
 
@@ -46,5 +51,9 @@
 \input{applications.tex}
 
 \input{plusLoin.tex}
+
+\newpage
+\printbibliography[title={Ressources utilisées}]
+
 
 \end{document}
