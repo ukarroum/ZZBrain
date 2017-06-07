@@ -8,10 +8,7 @@
 double sigmoid(double x){
     return 1/(1 + exp(-x));
 }
-double* sigmoid(double* M, int n, int m){
-
-    double *res = new double[n * m];
+void sigmoid(double* M, int n, int m, double *res){
     for(int i = 0; i < n*m; i++)
         res[i] = sigmoid(M[i]);
-    return res;
 }

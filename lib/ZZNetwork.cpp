@@ -76,8 +76,8 @@ void ZZNetwork::train(){
 
 double *ZZNetwork::predict(double *input) {
 
-    double *a = new double[maxNodes + 1];
-    double *z;
+    double *a = new double[maxNodes];
+    double *z = new double[maxNodes];
 
     if(a) {
 
@@ -88,12 +88,11 @@ double *ZZNetwork::predict(double *input) {
                 /* Add the bias node */
                 memmove(a + 1, a, network[i].nbNodesLayer1 * sizeof(double));
                 a[0] = 1.0;
-                z = mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1);
-                a = sigmoid(z, network[i].nbNodesLayer2, 1);
-                delete[] z;
+                mult(network[i].weights, a, network[i].nbNodesLayer2, network[i].nbNodesLayer1 + 1, 1, z);
+                sigmoid(z, network[i].nbNodesLayer2, 1, a);
         }
     }
-
+    delete[] z;
     return a;
 }
 
