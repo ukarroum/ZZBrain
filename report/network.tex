@@ -2,14 +2,14 @@
 
 \subsection{Introduction}
 
-Les réseaux des neurones représentent une des méthodes les plus utilisées en \textit{Machine Learning}, ils sont utilisés dans de nombreux domaines comme la vision par ordinateur entre autres. Leur popularité vient du fait qu'ils permettent de modéliser des problèmes très complexes. Récemment le champion du monde au jeu de Go vient de subir une défaite il y a deux semaines par un réseau de neurones\footnote{AlphaGo développé par Google}, dans le jeu que les informaticiens considèrent comme étant l'un des jeux les plus durs à automatiser puisque le nombre de possibilités énorme.
+Les réseaux des neurones représentent une des méthodes les plus utilisées en \textit{Machine Learning}, ils sont utilisés dans de nombreux domaines comme la vision par ordinateur entre autres. Leur popularité vient du fait qu'ils permettent de modéliser des problèmes très complexes. Récemment le champion du monde au jeu de Go vient de subir une défaite le 25 mai par un réseau de neurones\footnote{AlphaGo développé par Google}, dans le jeu que les informaticiens considèrent comme étant l'un des jeux les plus durs à automatiser puisque le nombre de possibilités est énorme.
 Cette méthode nécessite néanmoins une puissance de calcul et une mémoire assez conséquente, dès que le nombre des noeuds commencent à croitre.
 
 \newpage
 
 \subsection{Structure du réseau}
 
-Un réseau de neurons peut etre representé comme suit :
+Un réseau de neurones peut etre representé comme suit :
 
 \def\layersep{2.5cm}
 
@@ -126,7 +126,7 @@ Avec :
 \item[$K$ : ] Taille du vecteur de sortie.
 \item[$y$ : ] Réponse à une donnée particulière par exemple 1 si l'image en entrée est une voiture.
 \item[$h_\theta(x^{(i)})$ : ] Réponse donnée par le réseau de neurons (n'est pas nécéssairement égale à y).
-\item[$\lambda$ : ] : Parametre fournie par l'utilisateur qui permet d'éviter \textit{l'overfitting\footnote{L'overfitting est le fait d'avoir un réseau qui fournit d'excellents réseultats sur le dataset d'entrainements mais a des performences médiocres sur des données qu'il n'a jamais vu}}.
+\item[$\lambda$ : ] : Paramètre fourni par l'utilisateur qui permet d'éviter \textit{l'overfitting\footnote{L'overfitting est le fait d'avoir un réseau qui fournit d'excellents réseultats sur le dataset d'entrainements mais a des performences médiocres sur des données qu'il n'a jamais vu}}.
 \item[$L$ : ] Nombre de couches.
 \item[$s_l$ : ] Nombre de noeuds dans la couche l.
 

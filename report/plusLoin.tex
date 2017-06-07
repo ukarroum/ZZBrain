@@ -1,1 +1,15 @@
 \section{Aller plus loin}
+
+Il y a plusieurs améliorations qui peuvent être étudiés, afin d'améliorer le projet.
+
+Utiliser Dlib de façon plus intensive permettera d'éviter un trés grand nombre de calculs inutiles, et permettera d'avoir un code plus lisible, par exemple pour additioner deux matrices il suffira de faire A + B, au lieu d'appeler une matrice avec plein de parametres pour faire celà.
+
+Donner la possibilité à l'utilisateur de choisir la fonction d'activation qui lui convient, cette amélioration néamoins obligera l'utilisateur à coder sa propre fonction (ainsi que son dérivé correspadente) ce qui pourra allourdir l'utilisation de la bibliothéque, elle causera également un problème au niveau des parametres initiales, vu que le domaine choisi est étroitement liée à la fonction d'activation utilisé.
+
+Régler le problème des minimas locals, en lançant plusieurs fois la fonction de minimisation (avec des thetas initials différentes) et de prendre la fonction la plus minimale (cette méthode présente néanmoins un cout de calcul énorme). Il existe aussi des méthodes que nous n'avons pas eu l'occasion de creuser plus pronfondément dont les auteurs prétendent qu'ils permetteront de contourner les problèmes des minimas locaux.
+
+Ajouter un module permettant de tester le réseau (aprés la phase de l'entrainement) sur un autre dataset pour voir à quel point le réseau est précis sur des données qu'il n a jamais étudié.
+
+Automatiser le calcul de $\lambda$ (dépendera de la proposition précédante).
+
+Ecrire une partie de la fonction \textit{train} en \textit{CUDA}, qui permettera (si l'utilisateur le souhaite) de profiter de la puissance des GPU récents (dont certains sont optimisés pour les opérations en virgule flotantes et les calculs matricielles) au lieu d'effectuer les calculs sur le processeur.
