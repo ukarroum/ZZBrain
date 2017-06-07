@@ -1,14 +1,13 @@
 #ifndef ZZBRAIN_ZZNETWORK_H
 #define ZZBRAIN_ZZNETWORK_H
-#define DEFAULT_NB_OF_LAYERS 3
 
-#include "misc.h"
-#include "matrix.h"
 #include <ctime>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
 #include <dlib/optimization.h>
+#include "misc.h"
+#include "matrix.h"
 
 using namespace std;
 using namespace dlib;
@@ -44,7 +43,7 @@ public:
 
     ~ZZNetwork();
 
-public:
+private:
     int nbLayers;
     int maxNodes;
     bool trained;

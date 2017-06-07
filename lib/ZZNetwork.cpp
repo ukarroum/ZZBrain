@@ -134,10 +134,14 @@ const column_vector ZZNetwork::costFunctionDerivative(const column_vector& theta
 	D = backPropagation();
 	cpt = 0;
 
-	for(int l = 0; l < nbLayers - 1; l++)
+	for(int l = 0; l < nbLayers - 1; l++){
 		for(int i = 0; i < network[l].nbNodesLayer2; i++)
 			for(int j = 0; j < network[l].nbNodesLayer1 + 1; j++, cpt++)
 				deriv(cpt) = D[l][i][j];
+        for(int i = 0; i < maxNodes; i++)
+            delete[] D[l][i];
+        delete[] D[l];
+    }
 
 	return deriv;
 }
@@ -222,7 +226,9 @@ double ***ZZNetwork::backPropagation(){
                 D[l][i][0] = bigDelta[l][i][0]/setSize;
                 for(int j=1; j < network[l].nbNodesLayer1 + 1; j++)
                     D[l][i][j] = bigDelta[l][i][j]/setSize + lambda*network[l].weights[i * (network[l].nbNodesLayer1 + 1) + j];
+                delete[] bigDelta[l][i];
            }
+           delete[] bigDelta[l];
        }
 
 	return D;
